@@ -85,39 +85,33 @@ func main() {
 	}
 
 	if *colorize {
-    		// Colorize JSON
-    		var outputBytes []byte
-   	 	err := json.Unmarshal(output, &outputBytes)
-   	 	if err != nil {
-       	 	fmt.Fprintln(os.Stderr, err)
-       	 	os.Exit(1)
-    	}
-
-   	var colorized bytes.Buffer
-    	var obj interface{}
-    	err = json.Unmarshal(outputBytes, &obj)
-    	if err != nil {
-        	fmt.Fprintln(os.Stderr, err)
-        	os.Exit(1)
-    	}
-    	enc := json.NewEncoder(&colorized)
-    	enc.SetEscapeHTML(false)
-    	enc.SetIndent("", "    ")
-   	enc.Encode(obj)
-
-    	// Add color to keys and strings
-    	outputString := colorized.String()
-    	outputString = color.GreenString(outputString)
-    	outputString = color.BlueString(outputString)
-
-    	fmt.Println(outputString)
+	// Colorize JSON
+	var obj interface{}
+	err = json.Unmarshal(output, &obj)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 
+	colorized, err := json.MarshalIndent(obj, "", "    ")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	// Add color to keys and strings
+	outputString := string(colorized)
+	outputString = color.GreenString(outputString)
+	outputString = color.BlueString(outputString)
+
+	fmt.Println(outputString)
+	}
+	
 	if *monochrome {
-    	// Remove color codes from output
-   	 re := regexp.MustCompile("\x1b\\[[0-9;]*[m|K]")
-    	outputString := re.ReplaceAllString(string(output), "")
-    	fmt.Println(outputString)
+	// Remove color codes from output
+	re := regexp.MustCompile("\x1b\\[[0-9;]*[m|K]")
+	outputString := re.ReplaceAllString(string(output), "")
+	fmt.Println(outputString)
 	}
 
 	fmt.Println(string(output))
