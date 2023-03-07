@@ -56,6 +56,6 @@ echo '{"foo": 0}' | gjq .
 }
 ```
 
-License
+# [License](LICENSE)
 
 gjq is licensed under the MIT License. See LICENSE for more information.
